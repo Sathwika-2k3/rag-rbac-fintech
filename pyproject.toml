@@ -1,9 +1,17 @@
 [project]
-name = "ds-rpc-01"
+name = "rag-rbac-fintech"
 version = "0.1.0"
-description = "Starter project for the RPC-01: Internal Chatbot with Role Based Access Control"
+description = "Internal Chatbot with Role Based Access Control"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi[standard]>=0.115.12",
+    "python-dotenv>=1.0.0",
 ]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
