@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 
 from app.services.auth import authenticate
+from app.services.rag import answer_question
 
 app = FastAPI()
 
@@ -20,4 +21,5 @@ def test(user=Depends(authenticate)):
 # Protected chat endpoint
 @app.post("/chat")
 def query(user=Depends(authenticate), message: str = "Hello"):
-    return "Implement this endpoint."
+    result = answer_question(user["role"], message)
+    return {"answer": result["answer"], "sources": result["sources"], "role": user["role"]}
