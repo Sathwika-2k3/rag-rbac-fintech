@@ -5,7 +5,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 security = HTTPBasic()
 
-# Dummy user database — stands in for a real user store until Milestone 6.
+# Dummy user database — hardcoded here in place of a real user store with hashed passwords.
 users_db: Dict[str, Dict[str, str]] = {
     "Tony": {"password": "password123", "role": "engineering"},
     "Bruce": {"password": "securepass", "role": "marketing"},
