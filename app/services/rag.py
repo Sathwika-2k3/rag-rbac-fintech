@@ -1,10 +1,12 @@
 import sys
+import time
 
 from langchain_core.prompts import ChatPromptTemplate
 
 from app.services.guardrails import check_input, check_output
 from app.services.ingest import get_vectorstore
 from app.services.llm import get_llm
+from app.services.monitoring import log_usage
 from app.services.rbac import allowed_departments, search_for_role
 
 SYSTEM_PROMPT = """You are FinSolve's internal assistant. Answer the user's question using ONLY the context below.
@@ -42,7 +44,19 @@ def answer_question(role: str, question: str, k: int = 4) -> dict:
 
     context = format_context(documents)
     chain = prompt | get_llm()
+    start = time.perf_counter()
     response = chain.invoke({"context": context, "question": question})
+    latency_seconds = time.perf_counter() - start
+
+    usage = getattr(response, "usage_metadata", None) or {}
+    log_usage(
+        role=role,
+        question=question,
+        input_tokens=usage.get("input_tokens", 0),
+        output_tokens=usage.get("output_tokens", 0),
+        latency_seconds=latency_seconds,
+    )
+
     sources = sorted({doc.metadata.get("source", "unknown") for doc in documents})
     answer = check_output(response.content, allowed_departments(role))
     return {"answer": answer, "sources": sources, "blocked": False, "context": context}
