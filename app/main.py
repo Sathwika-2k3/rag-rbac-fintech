@@ -22,4 +22,9 @@ def test(user=Depends(authenticate)):
 @app.post("/chat")
 def query(user=Depends(authenticate), message: str = "Hello"):
     result = answer_question(user["role"], message)
-    return {"answer": result["answer"], "sources": result["sources"], "role": user["role"]}
+    return {
+        "answer": result["answer"],
+        "sources": result["sources"],
+        "role": user["role"],
+        "blocked": result["blocked"],
+    }
