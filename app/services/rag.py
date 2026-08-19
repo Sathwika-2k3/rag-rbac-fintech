@@ -29,7 +29,7 @@ def format_context(documents) -> str:
 def answer_question(role: str, question: str, k: int = 4) -> dict:
     block_reason = check_input(question)
     if block_reason:
-        return {"answer": block_reason, "sources": [], "blocked": True}
+        return {"answer": block_reason, "sources": [], "blocked": True, "context": ""}
 
     documents = search_for_role(get_vectorstore(), role, question, k=k)
     if not documents:
@@ -37,13 +37,15 @@ def answer_question(role: str, question: str, k: int = 4) -> dict:
             "answer": "I don't have access to any information that answers this question.",
             "sources": [],
             "blocked": False,
+            "context": "",
         }
 
+    context = format_context(documents)
     chain = prompt | get_llm()
-    response = chain.invoke({"context": format_context(documents), "question": question})
+    response = chain.invoke({"context": context, "question": question})
     sources = sorted({doc.metadata.get("source", "unknown") for doc in documents})
     answer = check_output(response.content, allowed_departments(role))
-    return {"answer": answer, "sources": sources, "blocked": False}
+    return {"answer": answer, "sources": sources, "blocked": False, "context": context}
 
 
 if __name__ == "__main__":
