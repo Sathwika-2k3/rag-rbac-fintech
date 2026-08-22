@@ -6,7 +6,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from app.config import DATA_DIR, VECTORSTORE_DIR
+from app.config import DATA_DIR, QDRANT_API_KEY, QDRANT_URL
 
 COLLECTION_NAME = "finsolve_docs"
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
@@ -55,7 +55,8 @@ def build_vectorstore() -> None:
     QdrantVectorStore.from_documents(
         documents,
         embedding=get_embeddings(),
-        path=str(VECTORSTORE_DIR),
+        url=QDRANT_URL,
+        api_key=QDRANT_API_KEY,
         collection_name=COLLECTION_NAME,
     )
 
@@ -64,7 +65,8 @@ def get_vectorstore() -> QdrantVectorStore:
     return QdrantVectorStore.from_existing_collection(
         collection_name=COLLECTION_NAME,
         embedding=get_embeddings(),
-        path=str(VECTORSTORE_DIR),
+        url=QDRANT_URL,
+        api_key=QDRANT_API_KEY,
     )
 
 
