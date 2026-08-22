@@ -5,6 +5,8 @@ from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from qdrant_client import QdrantClient
+from qdrant_client.http.models import PayloadSchemaType
 
 from app.config import DATA_DIR, QDRANT_API_KEY, QDRANT_URL
 
@@ -52,12 +54,27 @@ def get_embeddings() -> HuggingFaceEmbeddings:
 
 def build_vectorstore() -> None:
     documents = load_all_documents()
+    client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+
+    # Rebuild from scratch each run so re-ingesting never duplicates data —
+    # local embedded mode gave us this for free; a persistent cloud store doesn't.
+    if client.collection_exists(COLLECTION_NAME):
+        client.delete_collection(COLLECTION_NAME)
+
     QdrantVectorStore.from_documents(
         documents,
         embedding=get_embeddings(),
         url=QDRANT_URL,
         api_key=QDRANT_API_KEY,
         collection_name=COLLECTION_NAME,
+    )
+
+    # Qdrant Cloud requires an explicit index on any payload field used in a
+    # filter — local embedded mode didn't enforce this, the real server does.
+    client.create_payload_index(
+        collection_name=COLLECTION_NAME,
+        field_name="metadata.department",
+        field_schema=PayloadSchemaType.KEYWORD,
     )
 
 
