@@ -10,7 +10,6 @@ wheels/
 .venv
 .idea/ 
 *.lock
-resources/vectorstore
 resources/usage_log.jsonl
 .env
 # Added by code-review-graph
