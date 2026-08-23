@@ -17,24 +17,21 @@ The Project implements an advanced RAG system where logged-in user's role determ
 
 ```mermaid
 flowchart TD
-    U[User / React Frontend] -->|HTTP Basic Auth| EP["FastAPI /chat endpoint"]
-    EP --> AUTH{authenticate}
-    AUTH -->|invalid credentials: 401| U
-    AUTH -->|role resolved| GIN["Input guardrails\ncheck_input()"]
-    GIN -->|empty / too long / injection pattern| BLOCKED[Blocked response]
-    BLOCKED --> U
-    GIN -->|passes| SEARCH["search_for_role(role, question)"]
-    SEARCH --> QDRANT[("Qdrant Cloud\ncollection: finsolve_docs")]
-    QDRANT -->|filter: metadata.department in role's allowed depts\n+ relevance score >= 0.35| SEARCH
-    SEARCH -->|no relevant chunks| REFUSE["I don't have access to that information"]
-    REFUSE --> U
-    SEARCH -->|relevant chunks + sources| PROMPT["format_context() + system prompt\nanswer ONLY from context"]
-    PROMPT --> LLM["Groq LLM\nopenai/gpt-oss-120b"]
-    LLM --> GOUT["Output guardrails\ncheck_output(): PII redaction"]
-    GOUT --> RESP["answer + sources + blocked"]
-    RESP --> U
-    LLM -.token usage.-> LOG[(usage_log.jsonl)]
-    LLM -.full trace.-> LS[LangSmith]
+    U["User / React Frontend"] -->|"login + question"| AUTH["Authenticate\n(role resolved)"]
+    AUTH --> GIN["Input Guardrails\nlength · injection checks"]
+    GIN --> RET["Retrieval\nRBAC-filtered vector search"]
+    RET -->|"role-filtered search"| QDRANT[("Qdrant Cloud")]
+    QDRANT -->|"matching chunks"| RET
+    RET --> AUG["Augmentation\ngrounded system prompt"]
+    AUG --> GEN["Generation\nGroq LLM"]
+    GEN --> GOUT["Output Guardrails\nPII redaction"]
+    GOUT -->|"answer + sources, or refusal"| U
+
+    GEN -.->|"usage + latency"| MONITOR["Monitoring Layer\ntokens · cost · latency"]
+    MONITOR -.->|"{ prompt · tokens · latency · answer }"| LS["LangSmith"]
+
+    classDef ragStage fill:#fff8c5,stroke:#8a7a1a,stroke-width:1px
+    class RET,AUG,GEN ragStage
 ```
 
 ### How a query actually flows
