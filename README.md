@@ -12,7 +12,7 @@ FinSolve Technologies, is a leading FinTech company providing innovative financi
 
 To address these challenges, I have come up with an idea to develop a role-based access control (RBAC) chatbot to reduce communication delays, address data access barriers. 
 
-This project buils an advanced Retrieval-Augmented Generation (RAG), and it enforces Role-Based Access Control (RBAC) *inside the retrieval step itself* — role-based AI assisstant that offers secure, department-specific insights on demand.
+This project builds an advanced Retrieval-Augmented Generation (RAG), and it enforces Role-Based Access Control (RBAC) *inside the retrieval step itself* — role-based AI assisstant that offers secure, department-specific insights on demand.
 
 ## Project Overview
 
