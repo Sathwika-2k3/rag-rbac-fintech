@@ -1,0 +1,37 @@
+# Local environment / secrets — never bake these into an image
+.env
+.venv
+
+# Version control and AI-tool config — irrelevant to running the app
+.git
+.github
+.claude
+.codebuddy
+.gemini
+.qoder
+.kiro
+.vscode
+.code-review-graph
+.mcp.json
+opencode.jsonc
+.cursorrules
+.windsurfrules
+AGENTS.md
+CLAUDE.md
+CODEBUDDY.md
+GEMINI.md
+QODER.md
+
+# Frontend — deployed separately, not part of the backend image
+frontend
+
+# Not needed at request-serving time (only for local dev/testing/one-off ingestion)
+tests
+eval
+resources
+.pytest_cache
+rag_rbac_fintech.egg-info
+
+# Python artifacts
+__pycache__
+*.pyc

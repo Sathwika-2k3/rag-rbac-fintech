@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 
-const API_BASE = 'http://127.0.0.1:8000'
+const API_BASE = 'https://finsolve-backend-261456487410.southamerica-east1.run.app'
 
 function App() {
   const [username, setUsername] = useState('')

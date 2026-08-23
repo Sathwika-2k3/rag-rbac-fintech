@@ -10,9 +10,9 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    # Dev only — Vite can pick any port if its default is taken. Locked to a single
-    # real origin before Milestone 14's deployment.
-    allow_origin_regex=r"http://localhost:\d+",
+    # http://localhost:* — local dev (Vite can pick any port).
+    # *.web.app / *.firebaseapp.com — the deployed frontend (Milestone 14).
+    allow_origin_regex=r"http://localhost:\d+|https://project-1f197394-c3d5-45e1-832\.(web\.app|firebaseapp\.com)",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
