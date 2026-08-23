@@ -12,11 +12,12 @@ FinSolve Technologies, is a leading FinTech company providing innovative financi
 
 To address these challenges, I have come up with an idea to develop a role-based access control (RBAC) chatbot to reduce communication delays, address data access barriers. 
 
-This project builds an advanced Retrieval-Augmented Generation (RAG), and it enforces Role-Based Access Control (RBAC) *inside the retrieval step itself* — role-based AI assisstant that offers secure, department-specific insights on demand.
+This project builds an advanced Retrieval-Augmented Generation (RAG), 
+and it enforces Role-Based Access Control (RBAC) *inside the retrieval step itself* — role-based AI assisstant that offers secure, department-specific insights on demand.
 
 ## Project Overview
 
-The Project implements an advanced RAG system where logged-in user's role determines a fixed set of departments they're allowed to query. Every question first passes through input guardrails, then a Qdrant vector search that is filtered to *only* that role's allowed departments, then a grounded-answer prompt sent to an LLM, then output guardrails, before a cited answer is returned. Responses are evaluated for quality. The same pipeline is covered by an automated evaluation suite (RBAC-isolation probes, injection attempts, groundedness scoring) that gates every merge to `main` through GitHub Actions.
+The Project implements an advanced RAG chatbot where Role-Based Access Control is enforced at the retrieval layer itself, not just the UI. Your login role decides which departments the vector search is even allowed to touch. It runs on FastAPI, LangChain, Groq, and Qdrant, containerized with Docker, and deployed live on Google Cloud Run — with guardrails and an automated CI/CD pipeline gating every deployment."
 
 ## System Architecture
 
