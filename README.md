@@ -16,7 +16,7 @@ The Project implements an advanced RAG system where logged-in user's role determ
 ## System Architecture
 
 ```mermaid
-flowchart LR
+flowchart TD
     U["User / React Frontend"] -->|"login + question"| AUTH["Authenticate\n(role resolved)"]
     AUTH --> RAG["RBAC-Filtered RAG Pipeline\nguardrails · retrieval · prompt"]
     RAG -->|"role-filtered search"| QDRANT[("Qdrant Cloud")]
