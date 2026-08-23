@@ -19,23 +19,19 @@ The Project implements an advanced RAG system where logged-in user's role determ
 flowchart TD
     U["User / React Frontend"] -->|"login + question"| AUTH["Authenticate\n(role resolved)"]
     AUTH --> GIN["Input Guardrails\nlength · injection checks"]
-
-    subgraph RAG["RAG Pipeline — Retrieval → Augmentation → Generation"]
-        direction TB
-        RET["Retrieval\nRBAC-filtered vector search"]
-        PROMPT["Augmentation\ngrounded system prompt"]
-        LLM["Generation\nGroq LLM"]
-        RET --> PROMPT --> LLM
-    end
-
-    GIN --> RET
+    GIN --> RET["Retrieval\nRBAC-filtered vector search"]
     RET -->|"role-filtered search"| QDRANT[("Qdrant Cloud")]
     QDRANT -->|"matching chunks"| RET
-    LLM -.->|"usage + latency"| MONITOR["Monitoring Layer\ntokens · cost · latency"]
+    RET --> AUG["Augmentation\ngrounded system prompt"]
+    AUG --> GEN["Generation\nGroq LLM"]
+    GEN --> GOUT["Output Guardrails\nPII redaction"]
+    GOUT -->|"answer + sources, or refusal"| U
+
+    GEN -.->|"usage + latency"| MONITOR["Monitoring Layer\ntokens · cost · latency"]
     MONITOR -.->|"{ prompt · tokens · latency · answer }"| LS["LangSmith"]
 
-    LLM --> GOUT["Output Guardrails\nPII redaction"]
-    GOUT -->|"answer + sources, or refusal"| U
+    classDef ragStage fill:#fff8c5,stroke:#8a7a1a,stroke-width:1px
+    class RET,AUG,GEN ragStage
 ```
 
 ### How a query actually flows
