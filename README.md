@@ -17,24 +17,37 @@ The Project implements an advanced RAG system where logged-in user's role determ
 
 ```mermaid
 flowchart TD
-    U[User / React Frontend] -->|HTTP Basic Auth| EP["FastAPI /chat endpoint"]
-    EP --> AUTH{authenticate}
-    AUTH -->|invalid credentials: 401| U
-    AUTH -->|role resolved| GIN["Input guardrails\ncheck_input()"]
-    GIN -->|empty / too long / injection pattern| BLOCKED[Blocked response]
-    BLOCKED --> U
-    GIN -->|passes| SEARCH["search_for_role(role, question)"]
-    SEARCH --> QDRANT[("Qdrant Cloud\ncollection: finsolve_docs")]
-    QDRANT -->|filter: metadata.department in role's allowed depts\n+ relevance score >= 0.35| SEARCH
-    SEARCH -->|no relevant chunks| REFUSE["I don't have access to that information"]
-    REFUSE --> U
-    SEARCH -->|relevant chunks + sources| PROMPT["format_context() + system prompt\nanswer ONLY from context"]
-    PROMPT --> LLM["Groq LLM\nopenai/gpt-oss-120b"]
-    LLM --> GOUT["Output guardrails\ncheck_output(): PII redaction"]
-    GOUT --> RESP["answer + sources + blocked"]
-    RESP --> U
-    LLM -.token usage.-> LOG[(usage_log.jsonl)]
-    LLM -.full trace.-> LS[LangSmith]
+    U["User / React Frontend"]
+
+    subgraph API["FastAPI Backend"]
+        direction TB
+        AUTH["authenticate()\nHTTP Basic Auth"]
+        GIN["check_input()\nInput Guardrails"]
+        RBAC["search_for_role()\nRBAC Filter + Relevance Threshold ≥ 0.35"]
+        PROMPT["format_context()\nGrounded System Prompt"]
+        GOUT["check_output()\nOutput Guardrails · PII Redaction"]
+
+        AUTH --> GIN --> RBAC --> PROMPT --> GOUT
+    end
+
+    QDRANT[("Qdrant Cloud\nfinsolve_docs")]
+    LLM["Groq LLM\nopenai/gpt-oss-120b"]
+    LOG[("usage_log.jsonl")]
+    LS["LangSmith"]
+
+    U -->|"1 . credentials + question"| AUTH
+    RBAC -->|"2 . filtered vector search"| QDRANT
+    QDRANT -->|"3 . matching chunks + sources"| RBAC
+    PROMPT -->|"4 . prompt + context"| LLM
+    LLM -->|"5 . generated answer"| GOUT
+    GOUT -->|"6 . answer + sources + blocked"| U
+
+    LLM -.->|"token usage"| LOG
+    LLM -.->|"full trace"| LS
+
+    AUTH -.->|"invalid credentials → 401"| U
+    GIN -.->|"blocked: injection / empty / too long"| U
+    RBAC -.->|"no relevant chunks → refusal"| U
 ```
 
 ### How a query actually flows
