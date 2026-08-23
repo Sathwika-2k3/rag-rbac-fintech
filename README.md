@@ -1,13 +1,18 @@
 # FinSolve - AI document assisstant - A Role-Based Access Control System
 
-An internal AI assistant for a fintech company that answers employee questions using only the documents their role is allowed to see — with access control enforced at the retrieval layer not at UI.
-
 ## Business Problem
 
-1. FinSolve Technologies has company knowledge scattered across departments — Finance, Marketing, HR, Engineering, and company-wide policy — with no easy way for employees to find answers without asking the department directly or digging through shared drives. 
-2. A general chatbot over "all the documents" isn't an option: Finance reports, HR payroll data, and marketing metrics each need to stay visible only to the people entitled to see them.
+FinSolve Technologies, is a leading FinTech company providing innovative financial solutions and services to individuals, businesses, and enterprises.
 
-This project builds an AI Solution that solves both problems at once: it answers natural-language questions using Retrieval-Augmented Generation (RAG), and it enforces Role-Based Access Control (RBAC) *inside the retrieval step itself* — a secure , role-based AI assisstant delivering on-demand , department specific insights.
+
+1. FinSolve Technologies has company knowledge scattered across departments —  teams have been facing delays in communication and difficulty accessing the right data at the right time, which has led to inefficiencies. 
+2. These delays and data silos between different departments like Finance, Marketing, HR, and C-Level Executives have created roadblocks in decision-making, strategic planning, and project execution. 
+
+## Solution
+
+To address these challenges, I have come up with an idea to develop a role-based access control (RBAC) chatbot to reduce communication delays, address data access barriers. 
+
+This project buils an advanced Retrieval-Augmented Generation (RAG), and it enforces Role-Based Access Control (RBAC) *inside the retrieval step itself* — role-based AI assisstant that offers secure, department-specific insights on demand.
 
 ## Project Overview
 
