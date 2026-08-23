@@ -18,12 +18,24 @@ The Project implements an advanced RAG system where logged-in user's role determ
 ```mermaid
 flowchart TD
     U["User / React Frontend"] -->|"login + question"| AUTH["Authenticate\n(role resolved)"]
-    AUTH --> RAG["RBAC-Filtered RAG Pipeline\nguardrails · retrieval · prompt"]
-    RAG -->|"role-filtered search"| QDRANT[("Qdrant Cloud")]
-    QDRANT -->|"matching chunks"| RAG
-    RAG -->|"grounded prompt"| LLM["Groq LLM"]
-    LLM -->|"answer"| RAG
-    RAG -->|"answer + sources, or refusal"| U
+    AUTH --> GIN["Input Guardrails\nlength · injection checks"]
+
+    subgraph RAG["RAG Pipeline — Retrieval → Augmentation → Generation"]
+        direction TB
+        RET["Retrieval\nRBAC-filtered vector search"]
+        PROMPT["Augmentation\ngrounded system prompt"]
+        LLM["Generation\nGroq LLM"]
+        RET --> PROMPT --> LLM
+    end
+
+    GIN --> RET
+    RET -->|"role-filtered search"| QDRANT[("Qdrant Cloud")]
+    QDRANT -->|"matching chunks"| RET
+    LLM -.->|"usage + latency"| MONITOR["Monitoring Layer\ntokens · cost · latency"]
+    MONITOR -.->|"{ prompt · tokens · latency · answer }"| LS["LangSmith"]
+
+    LLM --> GOUT["Output Guardrails\nPII redaction"]
+    GOUT -->|"answer + sources, or refusal"| U
 ```
 
 ### How a query actually flows
