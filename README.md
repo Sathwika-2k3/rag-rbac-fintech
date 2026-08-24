@@ -15,6 +15,12 @@ To address these challenges, I have come up with an idea to develop a role-based
 This project builds an advanced Retrieval-Augmented Generation (RAG), 
 and it enforces Role-Based Access Control (RBAC) *inside the retrieval step itself* — role-based AI assisstant that offers secure, department-specific insights on demand.
 
+## Why Not a Regular Chatbot?
+
+A regular chatbot connected to all of FinSolve's documents would give every employee access to every department's data — HR salaries, financial reports, marketing metrics, all of it, regardless of who's asking. That's not just unnecessary, it's a real data exposure risk: an HR question should only ever be answerable using HR data, a Finance question only using Finance data, and so on. Access has to match the asker's actual role, not just be limited by what the UI chooses to display.
+
+That's exactly the gap this project closes: retrieval itself is scoped to a role's allowed departments before the AI ever sees a document, so the wrong data is never a candidate for an answer in the first place — not hidden after the fact, structurally unreachable.
+
 ## Project Overview
 
 The Project implements an advanced RAG chatbot where Role-Based Access Control is enforced at the retrieval layer itself, not just the UI. Your login role decides which departments the vector search is even allowed to touch. It runs on FastAPI, LangChain, Groq, and Qdrant, containerized with Docker, and deployed live on Google Cloud Run — with guardrails and an automated CI/CD pipeline gating every deployment."
