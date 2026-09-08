@@ -1,6 +1,6 @@
 # FinSolve - AI document assisstant - A Role-Based Access Control System
 
-## Demo
+## Demo References
 
 🎥 [Watch the demo video](https://www.loom.com/share/ad4232c6b8fc46789a44b4a6a812e41e)
 
