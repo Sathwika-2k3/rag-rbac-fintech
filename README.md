@@ -1,5 +1,9 @@
 # FinSolve - AI document assisstant - A Role-Based Access Control System
 
+## Demo
+
+🎥 [Watch the demo video](https://www.loom.com/share/ad4232c6b8fc46789a44b4a6a812e41e)
+
 ## Business Problem
 
 FinSolve Technologies, is a leading FinTech company providing innovative financial solutions and services to individuals, businesses, and enterprises.
